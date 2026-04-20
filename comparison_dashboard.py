@@ -11,10 +11,9 @@ st.title("Job Match Evaluation Dashboard")
 # ==========================================
 # GLOBAL CSS STYLES
 # ==========================================
-# We define all custom HTML classes here so they perfectly respect light/dark mode
 st.markdown("""
 <style>
-    /* Tab 1: Scrollable Description Box (Inherits native text/bg colors automatically) */
+    /* Tab 1: Scrollable Description Box */
     .scrollable-desc {
         height: 350px; 
         overflow-y: auto; 
@@ -57,7 +56,7 @@ st.markdown("""
         z-index: 999;
     }
     
-    /* Explicit Dark Mode Overrides for the floating panels */
+    /* Explicit Dark Mode Overrides */
     @media (prefers-color-scheme: dark) {
         .fixed-side-panel {
             background-color: var(--background-color, #0e1117);
@@ -107,6 +106,8 @@ if 'selected_job_company' not in st.session_state:
     st.session_state.selected_job_company = None
 if 'selected_job_location' not in st.session_state:
     st.session_state.selected_job_location = None
+if 'selected_job_date' not in st.session_state:
+    st.session_state.selected_job_date = None
 if 'selected_job_desc' not in st.session_state:
     st.session_state.selected_job_desc = None
 
@@ -147,7 +148,7 @@ with tab1:
         df2 = dataframes[model2]
         common_cols = ['job_url', 'title', 'company']
         
-        df1_eval = df1[common_cols + ['description', 'location', 'match_score', 'matched_skills', 'gaps_in_skill']].copy()
+        df1_eval = df1[common_cols + ['description', 'location', 'date_posted', 'match_score', 'matched_skills', 'gaps_in_skill']].copy()
         df2_eval = df2[common_cols + ['match_score', 'matched_skills', 'gaps_in_skill']].copy()
         
         df1_eval = df1_eval.rename(columns={'match_score': 'match_score_1', 'matched_skills': 'matched_skills_1', 'gaps_in_skill': 'gaps_in_skill_1'})
@@ -162,14 +163,14 @@ with tab1:
             with c1:
                 st.subheader(row['title'])
                 loc_str = row['location'] if pd.notna(row['location']) else "Unknown Location"
-                st.markdown(f"**🏢 {row['company']}** <br> 📍 {loc_str}", unsafe_allow_html=True)
+                date_str = row['date_posted'] if pd.notna(row['date_posted']) else "Unknown Date"
+                st.markdown(f"**🏢 {row['company']}** <br> 📍 {loc_str} <br> 📅 {date_str}", unsafe_allow_html=True)
                 
                 if pd.notna(row['job_url']):
                     st.markdown(f"🔗 [Link to Job Post]({row['job_url']})")
             with c2:
                 st.subheader("Job Description")
                 desc_html = str(row['description']).replace('\n', '<br>')
-                # THE FIX: Simply referencing the clean CSS class so it inherits natural theme colors
                 st.markdown(f'<div class="scrollable-desc">{desc_html}</div>', unsafe_allow_html=True)
             with c3:
                 st.subheader(f"Model: {model1}")
@@ -191,16 +192,48 @@ with tab1:
 # TAB 2: JOB BOARD VIEW
 # ==========================================
 with tab2:
-    st.header("Job Board")
-    board_model = st.selectbox("Select Model Results to View", options=model_names, index=0, key="board_model")
-    df_board = dataframes[board_model].copy()
-    
-    df_board['match_score_num'] = pd.to_numeric(df_board['match_score'], errors='coerce')
-    df_board = df_board.sort_values(by='match_score_num', ascending=False, na_position='last').reset_index(drop=True)
-    
+    # Set up the 2/3 and 1/3 split immediately
     main_col, side_col = st.columns([2, 1])
     
     with main_col:
+        # Move the header, select box, and filters INSIDE the 2/3 column
+        st.header("Job Board")
+        board_model = st.selectbox("Select Model Results to View", options=model_names, index=0, key="board_model")
+        df_board = dataframes[board_model].copy()
+        
+        # --- EXCLUSION FILTERS ---
+        st.markdown("##### Exclude Results")
+        filter_col1, filter_col2, filter_col3 = st.columns(3)
+        
+        with filter_col1:
+            all_locations = sorted([loc for loc in df_board['location'].unique() if pd.notna(loc)])
+            selected_locations = st.multiselect("Select Locations to Exclude", options=all_locations, default=[])
+            
+        with filter_col2:
+            all_companies = sorted([comp for comp in df_board['company'].unique() if pd.notna(comp)])
+            selected_companies = st.multiselect("Select Companies to Exclude", options=all_companies, default=[])
+            
+        with filter_col3:
+            all_dates = sorted([str(d) for d in df_board['date_posted'].unique() if pd.notna(d)], reverse=True)
+            selected_dates = st.multiselect("Select Dates to Exclude", options=all_dates, default=[])
+            
+        # Apply the exclusion filters
+        if selected_locations:
+            df_board = df_board[~df_board['location'].isin(selected_locations)]
+        if selected_companies:
+            df_board = df_board[~df_board['company'].isin(selected_companies)]
+        if selected_dates:
+            df_board = df_board[~df_board['date_posted'].astype(str).isin(selected_dates)]
+            
+        st.write(f"Showing **{len(df_board)}** jobs.")
+        st.divider()
+        # ---------------
+        
+        # Sort by match score
+        df_board['match_score_num'] = pd.to_numeric(df_board['match_score'], errors='coerce')
+        df_board = df_board.sort_values(by='match_score_num', ascending=False, na_position='last').reset_index(drop=True)
+        
+        # Display the job cards (also inside the 2/3 column)
         for i in range(0, len(df_board), 2):
             card_cols = st.columns(2)
             
@@ -212,7 +245,8 @@ with tab2:
                         with st.container(border=True):
                             st.subheader(row['title'])
                             loc_str = row['location'] if pd.notna(row['location']) else "Unknown Location"
-                            st.markdown(f"**🏢 {row['company']}** <br> 📍 {loc_str}", unsafe_allow_html=True)
+                            date_str = row['date_posted'] if pd.notna(row['date_posted']) else "Unknown Date"
+                            st.markdown(f"**🏢 {row['company']}** <br> 📍 {loc_str} <br> 📅 {date_str}", unsafe_allow_html=True)
                             
                             score_html = f"""
                             <div style="background-color: #f8f9fa; padding: 10px; border-radius: 8px; text-align: center; margin-bottom: 15px; margin-top: 10px;">
@@ -235,6 +269,7 @@ with tab2:
                                     st.session_state.selected_job_title = row['title']
                                     st.session_state.selected_job_company = row['company']
                                     st.session_state.selected_job_location = loc_str
+                                    st.session_state.selected_job_date = date_str
                                     st.session_state.selected_job_desc = row['description']
                                     
                             with btn_col2:
@@ -242,6 +277,7 @@ with tab2:
                                     st.link_button("🔗 Job Posting", row['job_url'], use_container_width=True)
 
     with side_col:
+        # The fixed panel remains exclusively in its 1/3 column
         if st.session_state.selected_job_desc:
             desc_html = str(st.session_state.selected_job_desc).replace('\n', '<br>')
             
@@ -249,8 +285,9 @@ with tab2:
             <div class="fixed-side-panel">
                 <h3 style="margin-top: 0; padding-top: 0;">{st.session_state.selected_job_title}</h3>
                 <p style="font-size: 16px; margin-bottom: 5px;"><strong>🏢 {st.session_state.selected_job_company}</strong></p>
-                <p style="font-size: 14px; margin-top: 0; color: gray;">📍 {st.session_state.selected_job_location}</p>
-                <hr style="border: 0; height: 1px; background: rgba(128, 128, 128, 0.2); margin: 15px 0;">
+                <p style="font-size: 14px; margin-top: 0; margin-bottom: 2px; color: gray;">📍 {st.session_state.selected_job_location}</p>
+                <p style="font-size: 14px; margin-top: 0; margin-bottom: 15px; color: gray;">📅 {st.session_state.selected_job_date}</p>
+                <hr style="border: 0; height: 1px; background: rgba(128, 128, 128, 0.2); margin: 0 0 15px 0;">
                 <div style="font-size: 14.5px; line-height: 1.6;">
                     {desc_html}
                 </div>
