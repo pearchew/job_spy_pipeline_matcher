@@ -4,11 +4,25 @@ import ollama
 from datetime import datetime
 import json
 
+with open('config.json', 'r') as f:
+    config = json.load(f)
+
+# Use config values
+selected_model = config.get("model", "phi4-mini")
+resume_filename = config.get("resume_filename", "resume.md")
+
 output_dir = Path("output")
 output_dir.mkdir(exist_ok=True)
 files_to_process = []
 latest_date = None
 today_str = datetime.now().strftime("%Y-%m-%d")
+
+resume_path = output_dir / resume_filename
+try:
+    resume_content = resume_path.read_text(encoding="utf-8")
+except FileNotFoundError:
+    print(f"Error: Could not find the file at {resume_path.absolute()}")
+    exit(1)
 
 for file_path in output_dir.glob("hk_*.csv"):
     # filename example: hk_data-analyst_2026-04-19.csv
@@ -104,7 +118,6 @@ if latest_date:
     print(f"Latest file date found: {latest_date.strftime('%Y-%m-%d')}")
     files_to_process = [f for f in files_to_process if f["date"] == latest_date]
     print(f"Processing {len(files_to_process)} file(s) from the latest date: {latest_date.strftime('%Y-%m-%d')}")
-resume_path = Path("output") / "resume.md"
 
 try:
     resume_content = resume_path.read_text(encoding="utf-8")
@@ -119,11 +132,8 @@ for file_details in files_to_process:
         print(f"\nProcessing file: {file_path.name} with {len(df)} job descriptions...")
     else:
         print("File not found! Double check your filename.")
-    # model = "llama3.2"
-    model = "phi4-mini"
-    # model = "gemma4:e2b"
     df["evaluation_json"] = df["description"].apply(
-        lambda desc: evaluate_fit(desc, resume_content, model)
+        lambda desc: evaluate_fit(desc, resume_content, selected_model)
     )
     df["keyword"] = file_details["keyword"]
     df["processed_date"] = today_str
@@ -135,7 +145,7 @@ for file_details in files_to_process:
     df["gaps_in_skill"] = df["evaluation_json"].apply(
         lambda x: ", ".join(x.get("gaps_in_skills", []))
     )
-    matched_master_path = Path("output") / f"matched_master_{model}.csv"
+    matched_master_path = Path("output") / f"matched_master_{selected_model}.csv"
     if not matched_master_path.exists():
         matched_master_path.write_text(
             "processed_date,keyword,company,title,date_posted,match_score,matched_skills,gaps_in_skill,job_url,description,location\n"

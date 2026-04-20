@@ -1,0 +1,7 @@
+{
+  "search_terms": ["graduate finance", "data", "analyst", "fintech"],
+  "location": "Hong Kong",
+  "exclude_terms": ["director", "vp", "vice president", "head", "principal", "snr", "lead", "senior","(?<!product\\s)manager"],
+  "model": "gemma4:e2b",
+  "resume_filename": "resume.md"
+}

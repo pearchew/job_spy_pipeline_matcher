@@ -5,9 +5,14 @@ import re
 import requests
 import io
 import urllib3
+import json
 
 # Suppress the insecure request warning that pops up when verify=False
 urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
+
+with open('config.json', 'r') as f:
+    config = json.load(f)
+exclude_terms = config.get("exclude_terms", [])
 
 def extract_linkedin_id(url):
     """Extracts the numeric job ID from various LinkedIn URL formats."""
@@ -62,8 +67,6 @@ def run_google_sheet_import():
         if len(df) == 0:
             print("No jobs were scraped today. Exiting without saving a new CSV.")
             return
-    # Add or remove keywords here based on your preferences
-    exclude_terms = ['director', 'vp', 'vice president', 'head', 'principal', 'senior', 'snr', 'lead']
     
     if 'title' in df.columns:
         pattern = '|'.join([fr'\b{t}\b' for t in exclude_terms])
