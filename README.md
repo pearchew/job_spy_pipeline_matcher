@@ -30,3 +30,54 @@ This project is orchestrated by `main.py` and is broken down into four primary m
 Clone the repository and set up a Python virtual environment to keep dependencies isolated.
 
 **For Mac/Linux:**
+```bash
+python3 -m venv venv
+source venv/bin/activate
+```
+
+**For Windows:**
+```bash
+python -m venv venv
+venv\Scripts\activate.bat
+```
+
+### 2. Install Dependencies
+Install the required Python packages using the provided `requirements.txt` file.
+```bash
+pip install -r requirements.txt
+```
+
+### 3. Local LLM Setup (Ollama)
+Ensure Ollama is running on your machine. You will need to pull the model specified in your `config.json` file. 
+
+For example, if you want to use `llama3.2` or `gemma4:e2b`:
+```bash
+ollama run gemma4:e2b
+# or
+ollama run llama3.2
+```
+
+### 4. Configuration
+Before running the pipeline, ensure your configuration files are set up:
+1. **`config.json`**: Update your `search_terms`, `location`, `exclude_terms`, and target `model`.
+2. **`resume.md`**: Place your resume in markdown format in the root directory. Ensure the filename matches the `resume_filename` key in your config.
+
+---
+
+## 🚀 Usage
+
+### Running the Data Pipeline
+To execute the entire scraping, enrichment, and AI screening workflow, simply run the orchestrator script:
+
+```bash
+python main.py
+```
+*Note: The script includes randomized human-like pauses to prevent rate-limiting from LinkedIn. Let it run until you see the success message.*
+
+### Viewing the Dashboard
+Once the pipeline is complete and the `matched_master_<model>.csv` file is generated in the `/output` folder, spin up the Streamlit dashboard to view your results:
+
+```bash
+streamlit run comparison_dashboard.py
+```
+This will open a local web server in your browser where you can review your highly matched jobs and analyze your skill gaps!
