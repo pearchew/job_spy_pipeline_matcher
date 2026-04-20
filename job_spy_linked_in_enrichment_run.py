@@ -74,4 +74,5 @@ def enrich_linkedin_descriptions(csv_path):
 # Loop through all CSVs in the output directory
 csv_files = glob.glob(f"{output_dir}/*.csv")
 for file in csv_files:
+    print(f"\n--- Starting enrichment for {file} ---")
     enrich_linkedin_descriptions(file)
