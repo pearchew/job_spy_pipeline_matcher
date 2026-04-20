@@ -142,7 +142,8 @@ for file_details in files_to_process:
     df["gaps_in_skill"] = df["evaluation_json"].apply(
         lambda x: ", ".join(x.get("gaps_in_skills", []))
     )
-    matched_master_path = Path("output") / f"matched_master_{selected_model}.csv"
+    safe_model_name = selected_model.replace(":", "_")
+    matched_master_path = Path("output") / f"matched_master_{safe_model_name}.csv"
     if not matched_master_path.exists():
         matched_master_path.write_text(
             "processed_date,keyword,company,title,date_posted,match_score,matched_skills,gaps_in_skill,job_url,description,location\n"
