@@ -14,8 +14,6 @@ exclude_terms = config.get("exclude_terms", [])
 proxy_list = ["localhost"]
 output_dir = pathlib.Path("output")
 output_dir.mkdir(exist_ok=True)
-output_dir = pathlib.Path("output")
-output_dir.mkdir(exist_ok=True)
 
 for term in search_terms:
     pause_time = random.uniform(30, 90)

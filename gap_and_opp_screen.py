@@ -4,11 +4,11 @@ import ollama
 from datetime import datetime
 import json
 
-with open('config.json', 'r') as f:
+with open("config.json", "r") as f:
     config = json.load(f)
 
 # Use config values
-selected_model = config.get("model", "phi4-mini")
+selected_model = config.get("model", "gemma4:e2b")
 resume_filename = config.get("resume_filename", "resume.md")
 
 output_dir = Path("output")
@@ -17,7 +17,7 @@ files_to_process = []
 latest_date = None
 today_str = datetime.now().strftime("%Y-%m-%d")
 
-resume_path = output_dir / resume_filename
+resume_path = Path(resume_filename)
 try:
     resume_content = resume_path.read_text(encoding="utf-8")
 except FileNotFoundError:
@@ -114,16 +114,13 @@ def evaluate_fit(description, candidate_profile, model="gemma4:e2b"):
         "gaps_in_domain_expertise": [],
     }
 
+
 if latest_date:
     print(f"Latest file date found: {latest_date.strftime('%Y-%m-%d')}")
     files_to_process = [f for f in files_to_process if f["date"] == latest_date]
-    print(f"Processing {len(files_to_process)} file(s) from the latest date: {latest_date.strftime('%Y-%m-%d')}")
-
-try:
-    resume_content = resume_path.read_text(encoding="utf-8")
-except FileNotFoundError:
-    print(f"Error: Could not find the file at {resume_path.absolute()}")
-    exit(1)
+    print(
+        f"Processing {len(files_to_process)} file(s) from the latest date: {latest_date.strftime('%Y-%m-%d')}"
+    )
 
 for file_details in files_to_process:
     file_path = file_details["path"]
@@ -150,23 +147,46 @@ for file_details in files_to_process:
         matched_master_path.write_text(
             "processed_date,keyword,company,title,date_posted,match_score,matched_skills,gaps_in_skill,job_url,description,location\n"
         )  # Create with headers
-    df[
-        [
-            "processed_date",
-            "keyword",
-            "company",
-            "title",
-            "date_posted",
-            "match_score",
-            "matched_skills",
-            "gaps_in_skill",
-            "job_url",
-            "description",
-            "location",
-        ]
-    ].to_csv(
-        matched_master_path,
-        mode="a",
-        index=False,
-        header=not matched_master_path.exists(),
-    )
+
+    cols_to_save = [
+        "processed_date",
+        "keyword",
+        "company",
+        "title",
+        "date_posted",
+        "match_score",
+        "matched_skills",
+        "gaps_in_skill",
+        "job_url",
+        "description",
+        "location",
+    ]
+    df_to_save = df[cols_to_save]
+    # .to_csv(
+    #     matched_master_path,
+    #     mode="a",
+    #     index=False,
+    #     header=not matched_master_path.exists(),
+    # )
+
+    if matched_master_path.exists():
+        # Load existing master data
+        existing_df = pd.read_csv(matched_master_path)
+
+        # Combine existing data with the newly processed data
+        combined_df = pd.concat([existing_df, df_to_save], ignore_index=True)
+
+        # Drop duplicates based on company, title, and job_url, keeping the most recent one
+        combined_df = combined_df.drop_duplicates(
+            subset=["company", "title", "job_url"], keep="last"
+        )
+
+        # Overwrite the file with the clean, deduplicated data
+        combined_df.to_csv(matched_master_path, index=False)
+        print(
+            f"Updated {matched_master_path.name} (Total unique records: {len(combined_df)})"
+        )
+    else:
+        # If the file doesn't exist yet, just save it normally
+        df_to_save.to_csv(matched_master_path, index=False)
+        print(f"Created {matched_master_path.name} with {len(df_to_save)} records")
