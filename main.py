@@ -1,13 +1,14 @@
 import subprocess
 import time
 import datetime
+import sys # 1. Import the sys module
 
 def run_script(script_name):
     print(f"========== RUNNING {script_name} ==========")
     script_start = time.time()
     
-    # Run the script
-    subprocess.run(["python", script_name], check=True)
+    # 2. Use sys.executable instead of "python"
+    subprocess.run([sys.executable, script_name], check=True) 
     
     script_end = time.time()
     elapsed_seconds = script_end - script_start
