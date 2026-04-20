@@ -100,7 +100,10 @@ def evaluate_fit(description, candidate_profile, model="gemma4:e2b"):
         "gaps_in_domain_expertise": [],
     }
 
-
+if latest_date:
+    print(f"Latest file date found: {latest_date.strftime('%Y-%m-%d')}")
+    files_to_process = [f for f in files_to_process if f["date"] == latest_date]
+    print(f"Processing {len(files_to_process)} file(s) from the latest date: {latest_date.strftime('%Y-%m-%d')}")
 resume_path = Path("output") / "resume.md"
 
 try:
