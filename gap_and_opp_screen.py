@@ -10,6 +10,8 @@ with open("config.json", "r") as f:
 # Use config values
 selected_model = config.get("model", "gemma4:e2b")
 resume_filename = config.get("resume_filename", "resume.md")
+location = config.get("location", "Hong Kong")
+location_safe = no_space_string = location.replace(" ", "")
 
 output_dir = Path("output")
 output_dir.mkdir(exist_ok=True)
