@@ -3,5 +3,6 @@
   "location": "Hong Kong",
   "exclude_terms": ["director", "vp", "vice president", "head", "principal", "snr", "lead", "senior","(?<!product\\s)manager"],
   "model": "gemma4:e2b",
-  "resume_filename": "resume.md"
+  "resume_filename": "resume.md",
+  "master_filename": "matched_master_gemma4_e2b.csv"
 }
