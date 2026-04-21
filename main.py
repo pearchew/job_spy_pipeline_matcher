@@ -29,6 +29,9 @@ if __name__ == "__main__":
         # 3. LLM Screening (Matching)
         run_script("gap_and_opp_screen.py")
         
+        # 4. Cleanup old records (Keep only last 14 days)
+        run_script("cleanup_old_jobs.py")
+        
         # Calculate total time
         pipeline_end = time.time()
         total_elapsed = pipeline_end - pipeline_start
