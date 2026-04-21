@@ -44,8 +44,6 @@ for term in search_terms:
         if not jobs.empty:
             print(jobs.head())
             current_date = time.strftime("%Y-%m-%d")
-            
-            # Format the filename so spaces in terms become dashes (e.g. hk_graduate-finance_2026-04-20.csv)
             safe_term = term.replace(" ", "-")
             file_path = output_dir / f"run_{safe_term}_{location_safe}_{current_date}.csv"
             

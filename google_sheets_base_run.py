@@ -137,7 +137,7 @@ def run_google_sheet_import():
     output_dir = pathlib.Path("output")
     output_dir.mkdir(exist_ok=True)
 
-    file_path = output_dir / f"run_googlesheet_{current_date}.csv"
+    file_path = output_dir / f"run_googlesheet_mixed_{current_date}.csv"
     
     df.to_csv(file_path, index=False)
     print(f"Success! Saved {len(df)} jobs from Google Sheets to {file_path}")
