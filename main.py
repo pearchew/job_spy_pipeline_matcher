@@ -30,7 +30,7 @@ if __name__ == "__main__":
         run_script("gap_and_opp_screen.py")
         
         # 4. Cleanup old records (Keep only last 14 days)
-        run_script("cleanup_old_jobs.py")
+        run_script("master_clean_up.py")
         
         # Calculate total time
         pipeline_end = time.time()

@@ -29,15 +29,14 @@ except FileNotFoundError:
 for file_path in output_dir.glob("run_*.csv"):
     parts = file_path.stem.split("_")
     try:
-        # Assuming format: hk_{keyword}_{date}
-        # keyword is the middle part, date is the last part
+        # Assuming format: run_{keyword}_{location}_{date}
         keyword = parts[1]
-        location = parts[2]
+        parsed_loc = parts[2] # Renamed so we don't overwrite the global 'location' variable
         date_str = parts[3]
         file_date = datetime.strptime(date_str, "%Y-%m-%d")
 
         files_to_process.append(
-            {"path": file_path, "keyword": keyword, "location": location, "date": file_date}
+            {"path": file_path, "keyword": keyword, "location_tag": parsed_loc, "date": file_date}
         )
         # Track the latest date found in the folder
         if latest_date is None or file_date > latest_date:
@@ -137,7 +136,26 @@ for file_details in files_to_process:
     )
     df["keyword"] = file_details["keyword"]
     df["processed_date"] = today_str
-    df["location"] = df["location"].fillna("N/A")
+    
+    file_loc_tag = file_details["location_tag"]
+    
+    # Check the location tag from the filename
+    if file_loc_tag == "mixed":
+        # Keep the original location from the CSV being looped through
+        if "location" in df.columns:
+            df["location"] = df["location"].fillna("N/A")
+        else:
+            df["location"] = "N/A"
+            
+    elif file_loc_tag == location_safe:
+        # Output the location column as the location_safe match 
+        # (Using `location` uses the original string from config with spaces, e.g., "Hong Kong")
+        # (If you prefer it without spaces, you can change this to df["location"] = location_safe)
+        df["location"] = location
+        
+    else:
+        # Fallback just in case it's a completely different location
+        df["location"] = file_loc_tag
     df["match_score"] = df["evaluation_json"].apply(lambda x: x.get("match_score", 0))
     df["matched_skills"] = df["evaluation_json"].apply(
         lambda x: ", ".join(x.get("matched_skills", []))
