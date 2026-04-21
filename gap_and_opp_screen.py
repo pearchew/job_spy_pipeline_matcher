@@ -26,9 +26,7 @@ except FileNotFoundError:
     print(f"Error: Could not find the file at {resume_path.absolute()}")
     exit(1)
 
-for file_path in output_dir.glob("hk_*.csv"):
-    # filename example: hk_data-analyst_2026-04-19.csv
-    # file_path.stem gives us 'hk_data-analyst_2026-04-19'
+for file_path in output_dir.glob("run_*.csv"):
     parts = file_path.stem.split("_")
     try:
         # Assuming format: hk_{keyword}_{date}
