@@ -13,6 +13,7 @@ urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
 with open('config.json', 'r') as f:
     config = json.load(f)
 exclude_terms = config.get("exclude_terms", [])
+master_filename = config.get("master_filename", "matched_master_gemma4_e2b.csv")
 
 def extract_linkedin_id(url):
     """Extracts the numeric job ID from various LinkedIn URL formats."""
@@ -56,17 +57,40 @@ def run_google_sheet_import():
         # Convert "20/04/2026 07:36:44" to "2026-04-20" format
         df['date_posted'] = pd.to_datetime(df['Date'], dayfirst=True, errors='coerce').dt.strftime('%Y-%m-%d')
 
-    # --- 3. FILTER FOR TODAY'S JOBS ONLY ---
+# --- 3. FILTER OUT JOBS ALREADY IN MASTER CSV ---
     current_date = time.strftime("%Y-%m-%d")
+    master_path = pathlib.Path("output") / master_filename
     
-    if 'date_posted' in df.columns:
+    if master_path.exists():
         original_count = len(df)
-        df = df[df['date_posted'] == current_date]
-        print(f"Filtered {original_count} total jobs down to {len(df)} jobs scraped today ({current_date}).")
+        master_df = pd.read_csv(master_path)
+        
+        # 1. Get existing Job URLs
+        existing_urls = set(master_df['job_url'].dropna().tolist())
+        
+        # 2. Get existing Company + Title combinations (as a fallback for missing/altered URLs)
+        master_df['comp_title'] = master_df['company'].astype(str).str.lower().str.strip() + "_" + master_df['title'].astype(str).str.lower().str.strip()
+        existing_comp_titles = set(master_df['comp_title'].dropna().tolist())
+        
+        # Create the same combination in our newly downloaded sheet
+        if 'company' in df.columns and 'title' in df.columns:
+            df['comp_title'] = df['company'].astype(str).str.lower().str.strip() + "_" + df['title'].astype(str).str.lower().str.strip()
+        else:
+            df['comp_title'] = ""
+            
+        # Filter: Keep rows where the URL is NOT in existing_urls AND the comp_title is NOT in existing_comp_titles
+        df = df[~df['job_url'].isin(existing_urls) & ~df['comp_title'].isin(existing_comp_titles)]
+        
+        # Clean up the temporary column
+        df = df.drop(columns=['comp_title'])
+        
+        print(f"Filtered {original_count} total jobs down to {len(df)} new jobs not present in {master_filename}.")
         
         if len(df) == 0:
-            print("No jobs were scraped today. Exiting without saving a new CSV.")
+            print("No new jobs found to process. Exiting without saving a new CSV.")
             return
+    else:
+        print(f"Master file '{master_filename}' not found. Processing all {len(df)} jobs from the sheet.")
     
     if 'title' in df.columns:
         pattern = '|'.join([fr'\b{t}\b' for t in exclude_terms])
