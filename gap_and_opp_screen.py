@@ -32,11 +32,12 @@ for file_path in output_dir.glob("hk_*.csv"):
         # Assuming format: hk_{keyword}_{date}
         # keyword is the middle part, date is the last part
         keyword = parts[1]
-        date_str = parts[2]
+        location = parts[2]
+        date_str = parts[3]
         file_date = datetime.strptime(date_str, "%Y-%m-%d")
 
         files_to_process.append(
-            {"path": file_path, "keyword": keyword, "date": file_date}
+            {"path": file_path, "keyword": keyword, "location": location, "date": file_date}
         )
         # Track the latest date found in the folder
         if latest_date is None or file_date > latest_date:
@@ -60,11 +61,13 @@ def evaluate_fit(description, candidate_profile, model="gemma4:e2b"):
     extraction_prompt = f"""
     You are an AI job fit evaluation engine specializing in technical and finance recruitment.
     Your task is to cross-reference the job description and the candidate profile to extract skills and domain expertise, and calculate a match score.
+    
 
     CRITICAL INSTRUCTIONS:
     1. Ignore company bios, benefits, and "What we offer" sections. 
     2. Focus your attention specifically on sections outlining candidate expectations. Look for headers or phrases such as:
     - Requirements / Minimum Qualifications
+    - Years of Experience Required
     - What we look for / What you'll need
     - About You / Your Profile
     - Skills and Experience

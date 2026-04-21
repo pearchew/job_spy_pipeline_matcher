@@ -7,6 +7,10 @@ Pierson Chu
 **Enterprise Software:** SAP (ERP), Microsoft Suite, Monday.com.
 **Languages:** English (Native), Spanish (Fluent), Cantonese (Fluent), Chinese (Conversational).
 
+## Education
+**BSc in Industrial Engineering** ,University of Wisconsin - Madison
+**MSc in Financial Technology** ,Imperial College London
+
 ## Professional Experience
 
 ### CASETiFY

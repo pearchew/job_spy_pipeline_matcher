@@ -9,6 +9,7 @@ with open('config.json', 'r') as f:
 
 search_terms = config.get("search_terms", [])
 location = config.get("location", "Hong Kong")
+location_safe = no_space_string = location.replace(" ", "")
 exclude_terms = config.get("exclude_terms", [])
 
 proxy_list = ["localhost"]
@@ -25,7 +26,7 @@ for term in search_terms:
             search_term=term,
             location=location,
             results_wanted=20,
-            hours_old=72,
+            hours_old=24,
             proxies=proxy_list,
             user_agent ="Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36",
         )
@@ -46,7 +47,7 @@ for term in search_terms:
             
             # Format the filename so spaces in terms become dashes (e.g. hk_graduate-finance_2026-04-20.csv)
             safe_term = term.replace(" ", "-")
-            file_path = output_dir / f"hk_{safe_term}_{current_date}.csv"
+            file_path = output_dir / f"run_{safe_term}_{location_safe}_{current_date}.csv"
             
             jobs.to_csv(file_path, index=False)
             print(f"Saved scraped jobs to {file_path}\n")

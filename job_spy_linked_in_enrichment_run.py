@@ -4,12 +4,11 @@ import pathlib
 import time
 import random
 import glob
+import json
 
 # Import JobSpy's internal LinkedIn scraper and models
 from jobspy.linkedin import LinkedIn
 from jobspy.model import ScraperInput, Site, DescriptionFormat
-
-output_dir = pathlib.Path("output")
 
 def enrich_linkedin_descriptions(csv_path):
     print(f"\nProcessing {csv_path}...")
@@ -71,6 +70,11 @@ def enrich_linkedin_descriptions(csv_path):
     else:
         print("No new descriptions were fetched.")
 
+with open('config.json', 'r') as f:
+    config = json.load(f)
+location = config.get("location", "Hong Kong")
+location_safe = no_space_string = location.replace(" ", "")
+output_dir = pathlib.Path("output")
 current_date = time.strftime("%Y-%m-%d")
 csv_files = glob.glob(f"{output_dir}/*_{current_date}.csv")
 
