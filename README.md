@@ -67,17 +67,13 @@ Before running the pipeline, ensure your configuration files are set up:
 ## 🚀 Usage
 
 ### Running the Data Pipeline
-To execute the entire scraping, enrichment, and AI screening workflow, simply run the orchestrator script:
-
-```bash
-python main.py
-```
-*Note: The script includes randomized human-like pauses to prevent rate-limiting from LinkedIn. Let it run until you see the success message.*
-
-### Viewing the Dashboard
-Once the pipeline is complete and the `matched_master_<model>.csv` file is generated in the `/output` folder, spin up the Streamlit dashboard to view your results:
-
-```bash
-streamlit run comparison_dashboard.py
-```
-This will open a local web server in your browser where you can review your highly matched jobs and analyze your skill gaps!
+1. Navigate to project folder and set up the virtual environment through the terminal:
+   1. cd path/to/your/project/job_spy_pipeline_matcher
+   2. mac: python3 -m venv venv | windows: python -m venv venv
+   3. mac: source venv/bin/activate | windows: venv\Scripts\activate.bat
+   4. pip install -r requirements.txt
+   5. ollama run [desired model for analysis e.g. gemma4:e2b]
+2. Navigate to the config files to input relevant parameters
+3. Open your Mac terminal, navigate to project folder, and run this command: chmod +x run_job_pipeline.command
+4. Run the .command file for mac
+5. Check the hosted streamlit dashboard
