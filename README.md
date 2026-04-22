@@ -77,3 +77,8 @@ Before running the pipeline, ensure your configuration files are set up:
 3. Open your Mac terminal, navigate to project folder, and run this command: chmod +x run_job_pipeline.command
 4. Run the .command file for mac
 5. Check the hosted streamlit dashboard
+
+### Running front end
+1. navigate to front_end folder in the terminal
+2. run npm install
+3. run npm run dev

@@ -59,15 +59,15 @@ def run_google_sheet_import():
         
         # Calculate the cutoff (3 days ago). 
         # .normalize() sets the time to 00:00:00 so it includes the full day, 3 days ago.
-        cutoff_date = pd.Timestamp.now().normalize() - pd.Timedelta(days=3)
+        cutoff_date = pd.Timestamp.now().normalize() - pd.Timedelta(days=2)
         
         # Filter the dataframe to keep only rows >= cutoff_date
         original_len_date = len(df)
         df = df[df['temp_datetime'] >= cutoff_date]
-        print(f"Filtered out {original_len_date - len(df)} jobs older than 3 days.")
+        print(f"Filtered out {original_len_date - len(df)} jobs older than 2 days.")
         
         if len(df) == 0:
-            print("No jobs found from the last 3 days. Exiting.")
+            print("No jobs found from the last 2 days. Exiting.")
             return
             
         # Convert the remaining dates to the required string format

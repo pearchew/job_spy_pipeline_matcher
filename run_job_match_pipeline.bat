@@ -18,5 +18,8 @@ git commit -m "Auto-update today's scraped jobs"
 git push
 
 echo.
-echo Done! Your Streamlit dashboard should update shortly.
-pause
+echo Done! Starting the frontend server...
+
+:: Navigate to the frontend directory and open a new window to run the server
+cd front_end
+start npm run dev
