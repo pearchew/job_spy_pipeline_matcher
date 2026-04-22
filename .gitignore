@@ -1,2 +1,12 @@
 venv
 run_*.csv
+
+front_end/node_modules/
+front_end/build/
+front_end/dist/
+front_end/coverage/
+.DS_Store
+front_end/.DS_Store
+front_end/*.log
+front_end/.env*
+front_end/!.env.example
