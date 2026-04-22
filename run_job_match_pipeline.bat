@@ -7,6 +7,9 @@ call venv\Scripts\activate.bat
 :: Run the main pipeline script
 python main.py
 
+echo Copying data to frontend...
+copy /Y output\matched_master_*.csv front_end\src\data\
+
 :: Push the newly generated CSVs to GitHub
 echo.
 echo Pushing updates to GitHub...

@@ -11,6 +11,9 @@ source venv/bin/activate
 # Run the main pipeline script
 python3 main.py
 
+echo "Copying data to frontend..."
+cp output/matched_master_*.csv front_end/src/data/
+
 # Push the newly generated CSVs to GitHub
 echo ""
 echo "Pushing updates to GitHub..."
@@ -18,5 +21,11 @@ git add output/
 git commit -m "Auto-update today's scraped jobs"
 git push
 
+# [Your existing git add/commit/push commands]
+
 echo ""
-echo "Done! Your Streamlit dashboard should update shortly."
+echo "Done! Starting the frontend server..."
+
+# Navigate to the frontend directory and start the server
+cd frontend
+npm run dev
