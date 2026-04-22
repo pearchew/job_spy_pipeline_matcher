@@ -10,3 +10,4 @@ front_end/.DS_Store
 front_end/*.log
 front_end/.env*
 front_end/!.env.example
+hk*.csv
