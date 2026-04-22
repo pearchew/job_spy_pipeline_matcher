@@ -52,12 +52,31 @@ def run_google_sheet_import():
     }
     df.rename(columns=column_mapping, inplace=True)
 
-    # --- 2. FORMAT THE DATE ---
+    # --- 2. FORMAT THE DATE & FILTER LAST 3 DAYS ---
     if 'Date' in df.columns:
-        # Convert "20/04/2026 07:36:44" to "2026-04-20" format
-        df['date_posted'] = pd.to_datetime(df['Date'], dayfirst=True, errors='coerce').dt.strftime('%Y-%m-%d')
+        # Create a temporary column with pandas datetime objects for mathematical comparison
+        df['temp_datetime'] = pd.to_datetime(df['Date'], dayfirst=True, errors='coerce')
+        
+        # Calculate the cutoff (3 days ago). 
+        # .normalize() sets the time to 00:00:00 so it includes the full day, 3 days ago.
+        cutoff_date = pd.Timestamp.now().normalize() - pd.Timedelta(days=3)
+        
+        # Filter the dataframe to keep only rows >= cutoff_date
+        original_len_date = len(df)
+        df = df[df['temp_datetime'] >= cutoff_date]
+        print(f"Filtered out {original_len_date - len(df)} jobs older than 3 days.")
+        
+        if len(df) == 0:
+            print("No jobs found from the last 3 days. Exiting.")
+            return
+            
+        # Convert the remaining dates to the required string format
+        df['date_posted'] = df['temp_datetime'].dt.strftime('%Y-%m-%d')
+        
+        # Drop the temporary datetime column as it's no longer needed
+        df.drop(columns=['temp_datetime'], inplace=True)    
 
-# --- 3. FILTER OUT JOBS ALREADY IN MASTER CSV ---
+    # --- 3. FILTER OUT JOBS ALREADY IN MASTER CSV ---
     current_date = time.strftime("%Y-%m-%d")
     master_path = pathlib.Path("output") / master_filename
     
