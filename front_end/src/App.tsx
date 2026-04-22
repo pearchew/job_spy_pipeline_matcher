@@ -41,6 +41,7 @@ export default function App() {
   const [selectedLocations, setSelectedLocations] = useState<string[]>([]);
   const [selectedCompanies, setSelectedCompanies] = useState<string[]>([]);
   const [selectedDates, setSelectedDates] = useState<string[]>([]);
+  const [minScore, setMinScore] = useState<number>(0);
 
   const currentModel = useMemo(() => modelsData.find(m => m.modelName === selectedModelName), [selectedModelName]);
   const currentJobs = currentModel?.jobs || [];
@@ -59,9 +60,10 @@ export default function App() {
       const locationMatch = selectedLocations.length === 0 || selectedLocations.includes(job.location);
       const companyMatch = selectedCompanies.length === 0 || selectedCompanies.includes(job.company);
       const dateMatch = selectedDates.length === 0 || selectedDates.includes(job.processed_date);
-      return locationMatch && companyMatch && dateMatch;
+      const scoreMatch = job.match_score >= minScore;
+      return locationMatch && companyMatch && dateMatch && scoreMatch;
     });
-  }, [currentJobs, selectedLocations, selectedCompanies, selectedDates]);
+  }, [currentJobs, selectedLocations, selectedCompanies, selectedDates, minScore]);
 
   const selectedJob = useMemo(() => {
     if (!selectedJobId) return null;
@@ -150,13 +152,16 @@ export default function App() {
                 selectedLocations={selectedLocations}
                 selectedCompanies={selectedCompanies}
                 selectedDates={selectedDates}
+                minScore={minScore}
                 onToggleLocation={toggleLocation}
                 onToggleCompany={toggleCompany}
                 onToggleDate={toggleDate}
+                onScoreChange={setMinScore}
                 onClearFilters={() => {
                   setSelectedLocations([]);
                   setSelectedCompanies([]);
                   setSelectedDates([]);
+                  setMinScore(0);
                 }}
               />
 

@@ -9,9 +9,11 @@ interface FilterBarProps {
   selectedLocations: string[];
   selectedCompanies: string[];
   selectedDates: string[];
+  minScore: number;
   onToggleLocation: (loc: string) => void;
   onToggleCompany: (comp: string) => void;
   onToggleDate: (date: string) => void;
+  onScoreChange: (score: number) => void;
   onClearFilters: () => void;
 }
 
@@ -80,35 +82,58 @@ export const FilterBar: React.FC<FilterBarProps> = ({
   selectedLocations,
   selectedCompanies,
   selectedDates,
+  minScore,
   onToggleLocation,
   onToggleCompany,
   onToggleDate,
+  onScoreChange,
   onClearFilters
 }) => {
-  const totalActive = selectedLocations.length + selectedCompanies.length + selectedDates.length;
+  const totalActive = selectedLocations.length + selectedCompanies.length + selectedDates.length + (minScore > 0 ? 1 : 0);
 
   return (
     <div className="flex flex-col bg-white border-b border-slate-200 shrink-0 shadow-[0_1px_2px_rgba(0,0,0,0.02)]">
       <div className="flex items-center px-6 py-2 pb-2.5 h-12 justify-between">
-        <div className="flex items-center space-x-3">
-          <FilterDropdown
-            label="Location"
-            options={locations}
-            selected={selectedLocations}
-            onToggle={onToggleLocation}
-          />
-          <FilterDropdown
-            label="Company"
-            options={companies}
-            selected={selectedCompanies}
-            onToggle={onToggleCompany}
-          />
-          <FilterDropdown
-            label="Date"
-            options={dates}
-            selected={selectedDates}
-            onToggle={onToggleDate}
-          />
+        <div className="flex items-center space-x-6">
+          <div className="flex items-center space-x-3">
+            <FilterDropdown
+              label="Location"
+              options={locations}
+              selected={selectedLocations}
+              onToggle={onToggleLocation}
+            />
+            <FilterDropdown
+              label="Company"
+              options={companies}
+              selected={selectedCompanies}
+              onToggle={onToggleCompany}
+            />
+            <FilterDropdown
+              label="Date"
+              options={dates}
+              selected={selectedDates}
+              onToggle={onToggleDate}
+            />
+          </div>
+
+          <div className="h-4 w-px bg-slate-200 hidden md:block" />
+
+          {/* Score Slider */}
+          <div className="flex flex-col min-w-[160px]">
+            <div className="flex justify-between items-center mb-0.5">
+               <span className="text-[10px] text-slate-400 font-bold uppercase tracking-widest">Min Match Score</span>
+               <span className={cn("text-[10px] font-black", minScore > 0 ? "text-blue-600" : "text-slate-400")}>{minScore}%</span>
+            </div>
+            <input 
+              type="range" 
+              min="0" 
+              max="100" 
+              step="5"
+              value={minScore}
+              onChange={(e) => onScoreChange(parseInt(e.target.value))}
+              className="w-full score-slider"
+            />
+          </div>
 
           {totalActive > 0 && (
             <button
@@ -135,6 +160,7 @@ export const FilterBar: React.FC<FilterBarProps> = ({
             ...selectedLocations.map(l => ({ val: l, type: 'Location', fn: onToggleLocation })),
             ...selectedCompanies.map(c => ({ val: c, type: 'Company', fn: onToggleCompany })),
             ...selectedDates.map(d => ({ val: d, type: 'Date', fn: onToggleDate })),
+            ...(minScore > 0 ? [{ val: `≥ ${minScore}%`, type: 'Match Score', fn: () => onScoreChange(0) }] : [])
           ].map(({ val, type, fn }) => (
             <div 
               key={`${type}-${val}`}
