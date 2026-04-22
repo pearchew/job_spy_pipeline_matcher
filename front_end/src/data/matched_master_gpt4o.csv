@@ -1,0 +1,4 @@
+processed_date,keyword,company,title,date_posted,match_score,matched_skills,gaps_in_skill,job_url,description,location
+2026-04-22,data,MS Capital Singapore,Quantitative Researcher / Developer,2026-04-21,95,"Python, SQL, PySpark, Machine Learning","C++, Quant Research",https://www.linkedin.com/jobs/view/4403917008,"High performance gpt4 analysis.","Hong Kong"
+2026-04-22,data,Zurich Insurance,Intern (Data Engineer),,92,"Python, SQL, PySpark","Azure Synapse Analytics",https://www.linkedin.com/jobs/view/4391864611,"GPT-4o detects high match for data engineering role.","Hong Kong"
+2026-04-22,fintech,Antalpha,AI Agent Developer Intern,,98,"Python, SQL, LLM applications, RAG systems, LangChain, FastAPI, Docker","JavaScript/TypeScript, Cloud deployment",https://www.linkedin.com/jobs/view/4402403106,"GPT-4o highly recommends this internship.","Hong Kong"
