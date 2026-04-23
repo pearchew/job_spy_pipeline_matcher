@@ -17,6 +17,9 @@ git add output/
 git commit -m "Auto-update today's scraped jobs"
 git push
 
+echo Pushing to Discord...
+python discord_notifier.py
+
 echo.
 echo Done! Starting the frontend server...
 
