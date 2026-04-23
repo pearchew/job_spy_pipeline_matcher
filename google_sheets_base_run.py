@@ -52,13 +52,13 @@ def run_google_sheet_import():
     }
     df.rename(columns=column_mapping, inplace=True)
 
-    # --- 2. FORMAT THE DATE & FILTER LAST 3 DAYS ---
+    # --- 2. FORMAT THE DATE & FILTER LAST 2 DAYS ---
     if 'Date' in df.columns:
         # Create a temporary column with pandas datetime objects for mathematical comparison
         df['temp_datetime'] = pd.to_datetime(df['Date'], dayfirst=True, errors='coerce')
         
-        # Calculate the cutoff (3 days ago). 
-        # .normalize() sets the time to 00:00:00 so it includes the full day, 3 days ago.
+        # Calculate the cutoff (2 days ago). 
+        # .normalize() sets the time to 00:00:00 so it includes the full day, 2 days ago.
         cutoff_date = pd.Timestamp.now().normalize() - pd.Timedelta(days=2)
         
         # Filter the dataframe to keep only rows >= cutoff_date

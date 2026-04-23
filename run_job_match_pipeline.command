@@ -27,5 +27,5 @@ echo ""
 echo "Done! Starting the frontend server..."
 
 # Navigate to the frontend directory and start the server
-cd frontend
+cd front_end
 npm run dev

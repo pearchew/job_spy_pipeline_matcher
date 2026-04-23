@@ -183,13 +183,7 @@ for file_details in files_to_process:
         "description",
         "location",
     ]
-    df_to_save = df[cols_to_save]
-    # .to_csv(
-    #     matched_master_path,
-    #     mode="a",
-    #     index=False,
-    #     header=not matched_master_path.exists(),
-    # )
+    df_to_save = df[cols_to_save].copy()
 
     if matched_master_path.exists():
         # Load existing master data
@@ -202,13 +196,42 @@ for file_details in files_to_process:
         combined_df = combined_df.drop_duplicates(
             subset=["company", "title", "job_url"], keep="last"
         )
-
-        # Overwrite the file with the clean, deduplicated data
-        combined_df.to_csv(matched_master_path, index=False)
-        print(
-            f"Updated {matched_master_path.name} (Total unique records: {len(combined_df)})"
-        )
     else:
-        # If the file doesn't exist yet, just save it normally
-        df_to_save.to_csv(matched_master_path, index=False)
-        print(f"Created {matched_master_path.name} with {len(df_to_save)} records")
+        # If the file doesn't exist yet, just use the newly processed data
+        combined_df = df_to_save.copy()
+
+    # --- UNIQUE 5-DIGIT ID GENERATION (CLEAN-UP SAFE) ---
+    # Ensure the 'job_id' column exists
+    if 'job_id' not in combined_df.columns:
+        combined_df['job_id'] = pd.NA
+
+    missing_id_mask = combined_df['job_id'].isna()
+    
+    if missing_id_mask.any():
+        # 1. Read the highest historical ID from a tracker file
+        tracker_path = Path("output/last_job_id.txt")
+        
+        if tracker_path.exists():
+            current_max = int(tracker_path.read_text().strip())
+        else:
+            # Fallback if tracker file doesn't exist yet: check CSV or start at 9999
+            valid_ids = pd.to_numeric(combined_df['job_id'], errors='coerce').dropna()
+            current_max = int(valid_ids.max()) if not valid_ids.empty else 9999
+        
+        # 2. Generate new sequential 5-digit IDs for the missing rows
+        num_missing = missing_id_mask.sum()
+        new_ids = range(current_max + 1, current_max + 1 + num_missing)
+        
+        # 3. Assign the new IDs
+        combined_df.loc[missing_id_mask, 'job_id'] = new_ids
+        
+        # 4. Save the new highest ID to the tracker file so it's permanently remembered
+        tracker_path.write_text(str(current_max + num_missing))
+
+    # Convert job_id to integer to remove any trailing decimals
+    combined_df['job_id'] = combined_df['job_id'].astype(int)
+
+    # Overwrite the file with the clean, deduplicated data
+    combined_df.to_csv(matched_master_path, index=False)
+    
+    print(f"Successfully saved {matched_master_path.name} (Total unique records: {len(combined_df)})")
