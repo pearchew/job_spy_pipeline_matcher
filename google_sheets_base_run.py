@@ -52,22 +52,22 @@ def run_google_sheet_import():
     }
     df.rename(columns=column_mapping, inplace=True)
 
-    # --- 2. FORMAT THE DATE & FILTER LAST 2 DAYS ---
+    # --- 2. FORMAT THE DATE & FILTER LAST 1 DAYS ---
     if 'Date' in df.columns:
         # Create a temporary column with pandas datetime objects for mathematical comparison
         df['temp_datetime'] = pd.to_datetime(df['Date'], dayfirst=True, errors='coerce')
         
-        # Calculate the cutoff (2 days ago). 
-        # .normalize() sets the time to 00:00:00 so it includes the full day, 2 days ago.
-        cutoff_date = pd.Timestamp.now().normalize() - pd.Timedelta(days=2)
+        # Calculate the cutoff (1 day ago). 
+        # .normalize() sets the time to 00:00:00 so it includes the full day, 1 day ago.
+        cutoff_date = pd.Timestamp.now().normalize() - pd.Timedelta(days=1)
         
         # Filter the dataframe to keep only rows >= cutoff_date
         original_len_date = len(df)
         df = df[df['temp_datetime'] >= cutoff_date]
-        print(f"Filtered out {original_len_date - len(df)} jobs older than 2 days.")
+        print(f"Filtered out {original_len_date - len(df)} jobs older than 1 day.")
         
         if len(df) == 0:
-            print("No jobs found from the last 2 days. Exiting.")
+            print("No jobs found from the last 1 day. Exiting.")
             return
             
         # Convert the remaining dates to the required string format
