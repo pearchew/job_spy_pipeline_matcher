@@ -8,7 +8,7 @@ with open("config.json", "r") as f:
     config = json.load(f)
 
 # Use config values
-selected_model = config.get("model", "gemma4:e2b")
+selected_model = config.get("model", "gemma4:e4b")
 resume_filename = config.get("resume_filename", "resume.md")
 location = config.get("location", "Hong Kong")
 location_safe = no_space_string = location.replace(" ", "")
@@ -46,7 +46,7 @@ for file_path in output_dir.glob("run_*.csv"):
         continue
 
 
-def evaluate_fit(description, candidate_profile, model="gemma4:e2b"):
+def evaluate_fit(description, candidate_profile, model="gemma4:e4b"):
     if pd.isna(description) or not str(description).strip():
         print("Skipping empty description...")
         return {
