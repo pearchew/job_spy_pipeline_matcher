@@ -128,7 +128,8 @@ for file_details in files_to_process:
     file_path = file_details["path"]
     if file_path.exists():
         df = pd.read_csv(file_path)
-        print(f"\nProcessing file: {file_path.name} with {len(df)} job descriptions...")
+        total_jobs = len(df) # Store the total count
+        print(f"\nProcessing file: {file_path.name} with {total_jobs} job descriptions...")
     else:
         print("File not found! Double check your filename.")
     df["evaluation_json"] = df["description"].apply(

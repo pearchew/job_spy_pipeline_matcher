@@ -1,4 +1,7 @@
 @echo off
+:: Change directory to the location of this batch file
+cd /d "%~dp0"
+
 echo Starting Job Spy Pipeline...
 
 :: Activate the virtual environment
@@ -17,12 +20,11 @@ git add output/
 git commit -m "Auto-update today's scraped jobs"
 git push
 
-echo Pushing to Discord...
-python discord_notifier.py
-
 echo.
-echo Done! Starting the frontend server...
+echo Done!
+echo Starting the frontend server...
 
 :: Navigate to the frontend directory and open a new window to run the server
 cd front_end
-start npm run dev
+:: Using cmd /k keeps the terminal window open if npm crashes, letting you read the error
+start cmd /k "npm run dev"

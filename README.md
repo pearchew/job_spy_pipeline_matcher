@@ -13,10 +13,9 @@ This project is orchestrated by `main.py` and is broken down into four primary m
    * `job_spy_linked_in_enrichment_run.py`: Scans the newly fetched jobs and uses JobSpy's internal LinkedIn scraper to scrape the full markdown job descriptions for any postings that are missing them.
 3. **AI Evaluation & Screening**
    * `gap_and_opp_screen.py`: Feeds your `resume.md` and the enriched job descriptions into a local LLM via Ollama. It prompts the AI to extract candidate expectations, calculate a match score (0-100%), and output matched skills and skill gaps in JSON format. Deduplicates and saves the results to a master tracker.
-4. **Visualization & Review**
-   * `comparison_dashboard.py`: A Streamlit web application that provides two views:
-     * **Job Board View:** Sorts jobs by their AI match score, displaying company info, matched skills, skill gaps, and a side-panel for reading the full job description.
-     * **Model Comparison:** Allows you to compare the evaluation results of two different LLM models side-by-side to see which model evaluates job fit better.
+4. **AI Evaluation & Screening**
+   * `generate_resumes.py`: Will do a run to generate resumes for jobs that are >90% in match score for the day 
+5. **Visualization & Review**
 
 ---
 

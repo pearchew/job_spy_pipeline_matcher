@@ -32,16 +32,16 @@ if __name__ == "__main__":
         # 4. Cleanup old records (Keep only last 14 days)
         run_script("master_clean_up.py")
         
+        # 5. Send notifications to Discord
+        run_script("discord_notifier.py")
+        
+        
         # Calculate total time
         pipeline_end = time.time()
         total_elapsed = pipeline_end - pipeline_start
         minutes = int(total_elapsed // 60)
         seconds = total_elapsed % 60
-        
-        print("==================================================")
-        print(f"✅ Pipeline complete! Total execution time: {minutes} minutes and {seconds:.2f} seconds.")
-        print("▶️ Run 'streamlit run comparison_dashboard.py' to view results.")
-        print("==================================================")
+        print(f"✅ Job Match Pipeline completed successfully in {minutes} minutes and {seconds:.2f} seconds!")
         
     except subprocess.CalledProcessError as e:
         print(f"\n❌ Pipeline failed! Error occurred while running: {' '.join(e.cmd)}")
