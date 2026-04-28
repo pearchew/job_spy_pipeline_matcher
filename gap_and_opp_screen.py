@@ -170,6 +170,11 @@ for file_details in files_to_process:
         matched_master_path.write_text(
             "processed_date,keyword,company,title,date_posted,match_score,matched_skills,gaps_in_skill,job_url,description,location\n"
         )  # Create with headers
+    front_end_path = Path("front_end") / "src" / "data" / f"matched_master_{safe_model_name}.csv"
+    if not front_end_path.exists():
+        front_end_path.write_text(
+            "processed_date,keyword,company,title,date_posted,match_score,matched_skills,gaps_in_skill,job_url,description,location\n"
+        )  # Create with headers
 
     cols_to_save = [
         "processed_date",
@@ -234,5 +239,7 @@ for file_details in files_to_process:
 
     # Overwrite the file with the clean, deduplicated data
     combined_df.to_csv(matched_master_path, index=False)
-    
+    combined_df.to_csv(front_end_path, index=False)
+
     print(f"Successfully saved {matched_master_path.name} (Total unique records: {len(combined_df)})")
+    print(f"Successfully saved {front_end_path.name} (Total unique records: {len(combined_df)})")

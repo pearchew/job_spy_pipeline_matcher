@@ -65,7 +65,7 @@ def main():
         send_to_discord(content="ℹ️ No new jobs found today with a match score > 90.")
         return
 
-    send_to_discord(content=f"🚨 **Found {len(high_match_jobs)} highly matched jobs! Generating resumes...**")
+    send_to_discord(content=f"🚨 **Found {len(high_match_jobs)} highly matched jobs! [Dashboard here](https://job-spy-pipeline-matcher.vercel.app/)**")
 
     for job in high_match_jobs:
         title = sanitize_field(job.get('title'), 'Unknown Title')
