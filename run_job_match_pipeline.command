@@ -11,19 +11,12 @@ source venv/bin/activate
 # Run the main pipeline script
 python3 main.py
 
-echo "Copying data to frontend..."
-cp output/matched_master_*.csv front_end/src/data/
-
-# Push the newly generated CSVs to GitHub
+# Push the newly generated CSVs (and frontend data) to GitHub
 echo ""
 echo "Pushing updates to GitHub..."
-git add output/
+git add output/ front_end/src/data/
 git commit -m "Auto-update today's scraped jobs"
 git push
-
-
-echo "Pushing to discord..."
-python3 discord_notifier.py
 
 echo ""
 echo "Done! Starting the frontend server..."

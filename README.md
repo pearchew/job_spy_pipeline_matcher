@@ -1,83 +1,121 @@
-# Job Spy AI Pipeline Matcher
+```markdown
+# 🕵️‍♂️ Job Spy Pipeline Matcher
 
-## 🎯 Project Goal
-The goal of this project is to automate the tedious process of job hunting by building an intelligent, end-to-end pipeline. It automatically scrapes relevant job postings, fetches full job descriptions, and uses local Large Language Models (LLMs) to cross-reference each job against your resume. Finally, it provides a clean, interactive dashboard to review your top-matching jobs, highlighting your matched skills and identifying exact skill gaps for every role.
+An automated, end-to-end job scraping and AI-matching pipeline. This project fetches job listings from LinkedIn and custom Google Sheets, enriches the data, evaluates candidate fit using local LLMs (via Ollama), generates tailored markdown resumes for highly matched roles, and serves the results to a local React dashboard and a Discord channel.
 
-## 🧠 What It Does (Project Outline)
-This project is orchestrated by `main.py` and is broken down into four primary modules:
+## ✨ Features
 
-1. **Data Ingestion (Base Runs)**
-   * `job_spy_linked_in_base_run.py`: Uses `jobspy` to scrape LinkedIn for recent job postings based on search terms and locations defined in `config.json`. It automatically filters out senior-level roles.
-   * `google_sheets_base_run.py`: Pulls manually tracked jobs from a published Google Sheet, maps the columns to the JobSpy schema, and filters for today's entries.
-2. **Data Enrichment**
-   * `job_spy_linked_in_enrichment_run.py`: Scans the newly fetched jobs and uses JobSpy's internal LinkedIn scraper to scrape the full markdown job descriptions for any postings that are missing them.
-3. **AI Evaluation & Screening**
-   * `gap_and_opp_screen.py`: Feeds your `resume.md` and the enriched job descriptions into a local LLM via Ollama. It prompts the AI to extract candidate expectations, calculate a match score (0-100%), and output matched skills and skill gaps in JSON format. Deduplicates and saves the results to a master tracker.
-4. **AI Evaluation & Screening**
-   * `generate_resumes.py`: Will do a run to generate resumes for jobs that are >90% in match score for the day 
-5. **Visualization & Review**
+* **Multi-Source Scraping:** Pulls daily job listings from LinkedIn (via JobSpy) and a custom Google Sheets tracker.
+* **AI-Powered Screening:** Uses local LLMs (`gemma4:e4b`) to cross-reference job descriptions against your base resume, extracting skills, domain expertise, and calculating a precise `% Match Score`.
+* **Automated Resume Tailoring:** Automatically drafts anti-hallucinated, highly targeted Markdown resumes (`qwen3:8b`) for any job with a match score of >= 90%.
+* **Discord Integration:** Sends instant alerts to a Discord webhook with links to high-match jobs and attaches the auto-generated markdown resume directly to the chat.
+* **Self-Cleaning Architecture:** Automatically purges daily scrape files, old tailored resumes, and database records older than 14 days to preserve disk space.
+* **Interactive Frontend Dashboard:** A modern Vite/React frontend that visualizes the `matched_master` database for easy browsing, filtering, and comparison.
+* **Cross-Platform Automation:** Includes `.bat` (Windows) and `.command` (Mac/Linux) scripts for 1-click execution, Git auto-syncing, and frontend server launching.
 
 ---
 
-## ⚙️ Setup Instructions
+## 🛠️ Prerequisites
 
-### Prerequisites
-* **Python 3.8+** installed on your machine.
-* **Ollama** installed and running locally (required for the AI evaluation step).
+Before you begin, ensure you have the following installed on your system:
+1. **[Python 3.8+](https://www.python.org/downloads/)**
+2. **[Node.js & npm](https://nodejs.org/)** (For the frontend dashboard)
+3. **[Ollama](https://ollama.com/)** (Running locally for AI evaluation)
+4. **[Git](https://git-scm.com/)** ---
 
-### 1. Environment Setup
-Clone the repository and set up a Python virtual environment to keep dependencies isolated.
+## 🚀 End-to-End Setup Guide
 
-**For Mac/Linux:**
+### 1. Clone the Repository
 ```bash
+git clone [https://github.com/yourusername/job_spy_pipeline_matcher.git](https://github.com/yourusername/job_spy_pipeline_matcher.git)
+cd job_spy_pipeline_matcher
+```
+
+### 2. Backend Setup (Python)
+Create and activate a virtual environment, then install the dependencies:
+```bash
+# For Mac/Linux
 python3 -m venv venv
 source venv/bin/activate
-```
 
-**For Windows:**
-```bash
+# For Windows
 python -m venv venv
-venv\Scripts\activate.bat
-```
+venv\Scripts\activate
 
-### 2. Install Dependencies
-Install the required Python packages using the provided `requirements.txt` file.
-```bash
+# Install required packages
 pip install -r requirements.txt
 ```
 
-### 3. Local LLM Setup (Ollama)
-Ensure Ollama is running on your machine. You will need to pull the model specified in your `config.json` file. 
-
-For example, if you want to use `llama3.2` or `gemma4:e2b`:
+### 3. Frontend Setup (React/Vite)
+Navigate to the frontend directory and install the required node modules:
 ```bash
-ollama run gemma4:e2b
-# or
-ollama run llama3.2
+cd front_end
+npm install
+cd ..
 ```
 
-### 4. Configuration
-Before running the pipeline, ensure your configuration files are set up:
-1. **`config.json`**: Update your `search_terms`, `location`, `exclude_terms`, and target `model`.
-2. **`resume.md`**: Place your resume in markdown format in the root directory. Ensure the filename matches the `resume_filename` key in your config.
+### 4. Local AI (Ollama) Setup
+Ensure the Ollama application is open and running in the background. You need to pull the specific models defined in your pipeline:
+```bash
+ollama pull gemma4:e4b
+ollama pull qwen3:8b
+```
+*(Note: If you use different models in `config.json`, pull those instead).*
+
+### 5. Configuration & Assets
+1. **Base Resume:** Place your master resume in the root directory and name it `resume.md`. The AI will use this as the absolute source of truth to prevent hallucination.
+2. **Pipeline Config:** Open `config.json` to define your search terms, target location, and job title exclusion keywords (e.g., "Director", "VP").
+3. **Discord Webhook (Optional):** Open `discord_notifier.py` and replace the `WEBHOOK_URL` variable with your own Discord channel's webhook URL to receive notifications.
 
 ---
 
-## 🚀 Usage
+## ⚙️ Running the Pipeline
 
-### Running the Data Pipeline
-1. Navigate to project folder and set up the virtual environment through the terminal:
-   1. cd path/to/your/project/job_spy_pipeline_matcher
-   2. mac: python3 -m venv venv | windows: python -m venv venv
-   3. mac: source venv/bin/activate | windows: venv\Scripts\activate.bat
-   4. pip install -r requirements.txt
-   5. ollama run [desired model for analysis e.g. gemma4:e2b]
-2. Navigate to the config files to input relevant parameters
-3. Open your Mac terminal, navigate to project folder, and run this command: chmod +x run_job_pipeline.command
-4. Run the .command file for mac
-5. Check the hosted streamlit dashboard
+You can run the entire pipeline—from scraping to AI evaluation to launching the dashboard—with a single command. 
 
-### Running front end
-1. navigate to front_end folder in the terminal
-2. run npm install
-3. run npm run dev
+**For Mac/Linux:**
+Open your terminal and run:
+```bash
+chmod +x run_job_match_pipeline.command
+./run_job_match_pipeline.command
+```
+
+**For Windows:**
+Simply double-click the `run_job_match_pipeline.bat` file, or run it via Command Prompt:
+```cmd
+run_job_match_pipeline.bat
+```
+
+### What happens when you run the script?
+1. Activates the Python virtual environment.
+2. Runs `main.py` which triggers scraping, AI screening, resume generation, cleanup, and Discord notifications.
+3. Commits the newly generated data and tailored resumes to Git and pushes to your remote repository.
+4. Starts the Vite development server for the frontend UI.
+
+---
+
+## 📂 Project Structure
+
+```text
+├── config.json                     # Search keywords, locations, model settings
+├── main.py                         # Master orchestrator script
+├── job_spy_linked_in_base_run.py   # Scrapes initial jobs from LinkedIn
+├── google_sheets_base_run.py       # Pulls custom jobs from Google Sheets
+├── job_spy_linked_in_enrichment.py # Fetches missing full job descriptions
+├── gap_and_opp_screen.py           # Evaluates fit and scores jobs (Ollama)
+├── generate_resumes.py             # Creates .md resumes for >90% matches
+├── master_clean_up.py              # Prunes data/files older than 14 days
+├── discord_notifier.py             # Sends high-match alerts to Discord
+├── resume.md                       # YOUR base resume (Source of truth)
+├── output/                         # Auto-generated CSVs and tailored resumes
+├── front_end/                      # React/Vite Dashboard Application
+├── run_job_match_pipeline.bat      # Windows execution wrapper
+└── run_job_match_pipeline.command  # Mac/Linux execution wrapper
+```
+
+## ⚠️ Troubleshooting
+
+* **Pipeline crashes instantly on screening:** Ensure the Ollama app is running on your machine before starting the pipeline. 
+* **Zero jobs found:** LinkedIn may be rate-limiting your IP. JobSpy includes human-pauses, but consider adjusting the sleep intervals or using a proxy if you get completely blocked.
+* **Frontend doesn't show new data:** Ensure the `.bat` or `.command` scripts are successfully pushing the `output` data to the `front_end/src/data` folder.
+```
