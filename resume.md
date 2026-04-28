@@ -49,6 +49,6 @@
 
 * **Domain Knowledge:** Supply Chain Management; Systems Optimization; Fintech; AML/KYC Compliance; Fraud Detection; Payment Reconciliation; Data Governance.
 * **Technical Skills:** Python (Pandas, NumPy, Scikit-learn, XGBoost, LightGBM, SQLAlchemy); SQL; PySpark; R.
-* **Data & AI Tools:** Databricks; Tableau; Power BI; Streamlit; LangChain; Llama 3/3.1; Ollama; HuggingFace; FastAPI; Docker; Chroma (Vector DB).
+* **Data & AI Tools:** Databricks; Tableau; Power BI; Streamlit; LangChain; Llama 3/3.1; Ollama; FastAPI; Docker; Chroma (Vector DB).
 * **Languages:** English (Native); Spanish (Fluent); Cantonese (Fluent); Chinese (Conversational).
 * **Interests:** Running; reading; chess.
