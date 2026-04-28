@@ -1,5 +1,5 @@
 {
-  "search_terms": ["graduate finance", "data", "analyst", "fintech"],
+  "search_terms": ["graduate finance", "data", "analyst", "fintech","policy","research"],
   "location": "Hong Kong",
   "exclude_terms": ["director", "vp", "vice president", "head", "principal", "snr", "lead", "senior","(?<!product\\s)manager"],
   "model": "gemma4:e4b",
