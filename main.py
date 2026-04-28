@@ -29,12 +29,14 @@ if __name__ == "__main__":
         # 3. LLM Screening (Matching)
         run_script("gap_and_opp_screen.py")
         
+        # 3a. Generate tailored resumes for high-match jobs
+        run_script("generate_resumes.py")
+        
         # 4. Cleanup old records (Keep only last 14 days)
         run_script("master_clean_up.py")
         
         # 5. Send notifications to Discord
         run_script("discord_notifier.py")
-        
         
         # Calculate total time
         pipeline_end = time.time()

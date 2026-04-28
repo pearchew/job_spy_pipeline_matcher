@@ -46,8 +46,6 @@
 * **GPA: 3.78/4.0**; Dean's List 2021-2023.
 
 **SKILLS, TOOLS & INTERESTS**
-
-* **Domain Knowledge:** Supply Chain Management; Systems Optimization; Fintech; AML/KYC Compliance; Fraud Detection; Payment Reconciliation; Data Governance.
 * **Technical Skills:** Python (Pandas, NumPy, Scikit-learn, XGBoost, LightGBM, SQLAlchemy); SQL; PySpark; R.
 * **Data & AI Tools:** Databricks; Tableau; Power BI; Streamlit; LangChain; Llama 3/3.1; Ollama; FastAPI; Docker; Chroma (Vector DB).
 * **Languages:** English (Native); Spanish (Fluent); Cantonese (Fluent); Chinese (Conversational).

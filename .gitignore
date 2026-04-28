@@ -11,3 +11,4 @@ front_end/*.log
 front_end/.env*
 front_end/!.env.example
 hk*.csv
+output/tailored_resumes
