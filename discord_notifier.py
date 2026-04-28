@@ -44,7 +44,7 @@ def main():
                 
                 # Filter for > 90 score AND processed today
                 recent_high_matches = df[
-                    (df['match_score'] > SCORE_THRESHOLD) & 
+                    (df['match_score'] >= SCORE_THRESHOLD) & 
                     (df['processed_date'] == today_str)
                 ]
                 
