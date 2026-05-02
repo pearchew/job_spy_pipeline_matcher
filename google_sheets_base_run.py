@@ -51,7 +51,6 @@ def run_google_sheet_import():
         'Location': 'location'
     }
     df.rename(columns=column_mapping, inplace=True)
-
     # --- 2. FORMAT THE DATE & FILTER LAST 2 DAYS ---
     if 'Date' in df.columns:
         # Create a temporary column with pandas datetime objects for mathematical comparison

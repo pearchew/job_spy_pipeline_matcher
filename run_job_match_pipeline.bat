@@ -5,7 +5,7 @@ cd /d "%~dp0"
 echo Starting Job Spy Pipeline...
 
 :: Activate the virtual environment
-call venv\Scripts\activate.bat
+call .venv\Scripts\activate.bat
 
 :: Run the main pipeline script
 python main.py
