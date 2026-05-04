@@ -12,3 +12,5 @@ front_end/.env*
 front_end/!.env.example
 hk*.csv
 output/tailored_resumes
+.DS_Store
+output/.DS_Store
