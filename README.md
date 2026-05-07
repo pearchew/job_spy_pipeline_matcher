@@ -1,4 +1,4 @@
-```markdown
+
 # 🕵️‍♂️ Job Spy Pipeline Matcher
 
 An automated, end-to-end job scraping and AI-matching pipeline. This project fetches job listings from LinkedIn and custom Google Sheets, enriches the data, evaluates candidate fit using local LLMs (via Ollama), generates tailored markdown resumes for highly matched roles, and serves the results to a local React dashboard and a Discord channel.
