@@ -16,7 +16,7 @@ const csvFiles = import.meta.glob('/src/data/matched_master_*.csv', { as: 'raw',
 const modelsData = Object.entries(csvFiles).map(([path, content]) => {
   const filename = path.split('/').pop() || '';
   const modelName = filename.replace('matched_master_', '').replace('.csv', '');
-  
+
   const results = Papa.parse(content, { header: true, skipEmptyLines: true });
   const jobs = (results.data as any[])
     .map((row, i) => ({
@@ -31,6 +31,7 @@ const modelsData = Object.entries(csvFiles).map(([path, content]) => {
 });
 
 export default function App() {
+  const [searchQuery, setSearchQuery] = useState('');
   const [activeTab, setActiveTab] = useState<TabType>('board');
   const [selectedModelName, setSelectedModelName] = useState<string>(modelsData[0]?.modelName || '');
   const [compModelNameA, setCompModelNameA] = useState<string>(modelsData[0]?.modelName || '');
@@ -54,16 +55,25 @@ export default function App() {
   const allCompanies = useMemo(() => Array.from(new Set(currentJobs.map(j => j.company).filter(Boolean))), [currentJobs]);
   const allDates = useMemo(() => Array.from(new Set(currentJobs.map(j => j.processed_date).filter(Boolean))), [currentJobs]);
 
-  // Filtered jobs
   const filteredJobs = useMemo(() => {
     return currentJobs.filter(job => {
+      // Existing filters...
       const locationMatch = selectedLocations.length === 0 || selectedLocations.includes(job.location);
       const companyMatch = selectedCompanies.length === 0 || selectedCompanies.includes(job.company);
       const dateMatch = selectedDates.length === 0 || selectedDates.includes(job.processed_date);
       const scoreMatch = job.match_score >= minScore;
-      return locationMatch && companyMatch && dateMatch && scoreMatch;
+
+      // NEW: Text Search Filter
+      const query = searchQuery.trim().toLowerCase();
+      const textMatch = !searchQuery ||
+        job.title?.toLowerCase().includes(query) ||
+        job.company?.toLowerCase().includes(query) ||
+        job.matched_skills?.toLowerCase().includes(query);
+
+      return locationMatch && companyMatch && dateMatch && scoreMatch && textMatch;
     });
-  }, [currentJobs, selectedLocations, selectedCompanies, selectedDates, minScore]);
+  }, [currentJobs, selectedLocations, selectedCompanies, selectedDates, minScore, searchQuery]);
+  // Don't forget to add searchQuery to the dependency array!
 
   const selectedJob = useMemo(() => {
     if (!selectedJobId) return null;
@@ -157,6 +167,8 @@ export default function App() {
                 onToggleCompany={toggleCompany}
                 onToggleDate={toggleDate}
                 onScoreChange={setMinScore}
+                searchQuery={searchQuery}
+                onSearchChange={setSearchQuery}
                 onClearFilters={() => {
                   setSelectedLocations([]);
                   setSelectedCompanies([]);
@@ -168,12 +180,12 @@ export default function App() {
               <div className="flex-1 flex overflow-hidden">
                 {/* Left 2/3 - Job Cards */}
                 <div className="w-2/3 border-r border-slate-200 bg-slate-50/50 p-4 overflow-y-auto">
-                    <div className="flex items-center justify-between mb-4 px-2">
-                        <h2 className="text-xs font-bold text-slate-400 uppercase tracking-widest">Recent Matches</h2>
-                        <div className="text-[10px] text-slate-400 font-medium">
-                            Displaying <strong>{filteredJobs.length}</strong> matches
-                        </div>
+                  <div className="flex items-center justify-between mb-4 px-2">
+                    <h2 className="text-xs font-bold text-slate-400 uppercase tracking-widest">Recent Matches</h2>
+                    <div className="text-[10px] text-slate-400 font-medium">
+                      Displaying <strong>{filteredJobs.length}</strong> matches
                     </div>
+                  </div>
                   <div className="space-y-3 max-w-3xl mx-auto">
                     {filteredJobs.map((job: any) => (
                       <JobCard
@@ -210,8 +222,8 @@ export default function App() {
                 <div className="flex items-center gap-4">
                   <div className="flex flex-col">
                     <span className="text-[9px] font-black text-slate-400 uppercase tracking-widest">Comp Base (Left)</span>
-                    <select 
-                      value={compModelNameA} 
+                    <select
+                      value={compModelNameA}
                       onChange={(e) => setCompModelNameA(e.target.value)}
                       className="text-xs font-bold text-blue-600 bg-blue-50 border-none rounded px-2 py-1 outline-none appearance-none cursor-pointer"
                     >
@@ -223,8 +235,8 @@ export default function App() {
                   <div className="w-4 h-px bg-slate-200 mt-4" />
                   <div className="flex flex-col">
                     <span className="text-[9px] font-black text-slate-400 uppercase tracking-widest">Differential (Right)</span>
-                    <select 
-                      value={compModelNameB} 
+                    <select
+                      value={compModelNameB}
                       onChange={(e) => setCompModelNameB(e.target.value)}
                       className="text-xs font-bold text-purple-600 bg-purple-50 border-none rounded px-2 py-1 outline-none appearance-none cursor-pointer"
                     >
@@ -260,7 +272,7 @@ export default function App() {
           <span>Latency: 142ms</span>
         </div>
         <div className="opacity-60 uppercase font-bold tracking-widest text-[9px]">
-           MatchMaster v2.1 Terminal
+          MatchMaster v2.1 Terminal
         </div>
       </footer>
     </div>

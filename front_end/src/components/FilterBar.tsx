@@ -15,6 +15,8 @@ interface FilterBarProps {
   onToggleDate: (date: string) => void;
   onScoreChange: (score: number) => void;
   onClearFilters: () => void;
+  searchQuery: string;
+  onSearchChange: (query: string) => void;
 }
 
 const FilterDropdown: React.FC<{
@@ -41,6 +43,7 @@ const FilterDropdown: React.FC<{
         </span>
         <ChevronDown className={cn("w-3 h-3 text-slate-400 transition-transform", isOpen && "rotate-180")} />
       </button>
+      
 
       {isOpen && (
         <>
@@ -83,6 +86,8 @@ export const FilterBar: React.FC<FilterBarProps> = ({
   selectedCompanies,
   selectedDates,
   minScore,
+  searchQuery,
+  onSearchChange,
   onToggleLocation,
   onToggleCompany,
   onToggleDate,
@@ -146,7 +151,16 @@ export const FilterBar: React.FC<FilterBarProps> = ({
           )}
         </div>
 
-        <div className="flex items-center gap-2">
+        <div className="flex items-center gap-4">
+            {/* NEW SEARCH INPUT HERE */}
+            <input
+              type="text"
+              placeholder="Search title, company, skills..."
+              value={searchQuery}
+              onChange={(e) => onSearchChange(e.target.value)}
+              className="px-3 py-1.5 text-xs border border-slate-200 rounded text-slate-800 placeholder-slate-400 focus:outline-none focus:border-blue-400 focus:ring-1 focus:ring-blue-400 w-64 transition-colors"
+            />
+            
             <div className="text-[10px] text-slate-400 font-bold uppercase tracking-widest bg-slate-50 px-2 py-1 rounded border border-slate-100">
                 Active: <span className="text-slate-900">{totalActive}</span>
             </div>
