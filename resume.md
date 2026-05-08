@@ -2,22 +2,23 @@
 
 **WORK EXPERIENCE**
 
-**CASETiFY** **Jul. 2024 – Present** *Business Analyst* *Hong Kong*
+**Junior Data Analyst @ CASETiFY** | Jul. 2024 – Present | Hong Kong
 
 * **Co-developed** an LLM-powered AI solution to analyze unstructured data, optimizing a $10M+ marketing budget.
   * **Key Results:** Awarded 3rd Place at Databricks APJ Smart Business Insights Challenge.
 * **Redefined** company-wide "Design Class" logic by engineering a PySpark pipeline on Databricks processing 30M+ artwork records.
   * **Key Results:** Utilized Regex and text mining to reverse-engineer metadata patterns, establishing a single source of truth for sales analytics.
 * **Co-developed** an automated system for strategic inventory management across product lifecycles (Launch, Peak, Stable, Decline).
-  * **Key Results:** Aggregated siloed data to replace manual inputs, improving first-buy accuracy, service level attainment, and working capital recovery.
+  * **Key Results:** Aggregated siloed data to replace manual inputs, improving first-buy accuracy and service level attainment.
 * **Spearheaded** an analytical framework for CASETiFY Travel, analyzing metrics to guide creative teams.
   * **Key Results:** Generated $1.5M revenue in 8 months and built a bottom-up revenue model for the "Pets" line, challenging initial 6-10% growth assumptions and saving capital.
 * **Acted** as primary Product Specialist for internal Tableau server across 8+ business units.
   * **Key Results:** Monitored usage trends and analyzed user needs, driving product adoption up by 200%.
-* **Created** comprehensive Data Dictionaries and SOPs, and co-led an 8-week data literacy program for 20+ colleagues to foster self-sufficiency.
-  * **Key Results:** Resolved 220+ data tickets via Monday.com.
+* **Co-led** an 8-week data literacy program for 20+ colleagues to foster self-sufficiency.
+* **Built** a bottom-up revenue model to evaluate the "Pets" product line, successfully challenging initial 6-10% growth assumptions and influencing senior leadership to pivot strategy and save capital.
+* **Resolved** 220+ data tickets via Monday.com, managing a diverse queue of debugging, validation, and feature requests. 
 
-**L'Oréal** **Jan. 2024 – Jun. 2024** *Demand and Supply Planning Intern* *Hong Kong*
+**Demand and Supply Planning Intern @ L'Oréal** | Jan. 2024 – Jun. 2024 |  Hong Kong
 
 * **Analyzed** supply chain inefficiencies and recommended process improvements.
   * **Key Results:** Drove a 37.5% reduction in inventory holding and saved 6M HKD in working capital.
@@ -25,28 +26,34 @@
 
 **TECHNICAL PROJECTS**
 
-**Fraud Detection Model (Fintech)** **2026** *Personal Project*
+**Job Spy Pipeline Matcher**
+* Engineered an automated job scraping and AI-matching pipeline that fetches daily listings from LinkedIn and Google Sheets.
+  * **Key Results:** Automatically generates tailored markdown resumes for highly matched roles (>= 90%) and sends instant alerts via Discord webhooks.
+  * **Stack:** Local LLMs (Ollama), React/Vite.
 
-* **Engineered** an ML fraud detection pipeline for highly imbalanced financial datasets (0.17% fraud rate) using SMOTE oversampling.
-  * **Tech Stack:** Python, Scikit-learn, XGBoost, LightGBM, Imbalanced-learn, Pandas, NumPy.
-  * **Key Results:** Achieved 82% recall and 88% precision using Random Forest, implementing robust preprocessing and comparing multiple algorithms for production viability.
+**Anti-Money Laundering (AML) Fraud Detection Model** 
+* Engineered a graph network using NetworkX to map Bitcoin flows and trained a Random Forest Classifier on the Elliptic dataset.
+  * **Key Results:** Flagged illicit activity with 99% precision; deployed a production-ready FastAPI server for real-time fraud scoring.
+  * **Stack:** SHAP (Explainable AI), Fairlearn, FastAPI, Adversarial Robustness Toolbox, Evidently AI.
 
-**Open Source AI Engineering Roadmap (LLM / RAG Systems)** **2026** *Personal Project*
+**AI-Powered Regulatory & Market Horizon Scanner**
+* Engineered an end-to-end web scraping pipeline to continuously monitor global regulatory bodies (SFC, HKMA, BIS) and tech hubs.
+  * **Key Results:** Extracted critical compliance insights and key dates from multi-page PDFs, pushing alerts via webhooks
+  * **Stack:** Local LLMs (Ollama), LlamaIndex.
 
-* **Developed** a local-first LLM application architecture and built an end-to-end Retrieval-Augmented Generation (RAG) pipeline.
-  * **Tech Stack:** Python, FastAPI, Ollama, Llama 3/3.1, LangChain, LangGraph, Chroma, Docker, vLLM.
-  * **Key Results:** Implemented PDF ingestion, semantic chunking, and CrossEncoder reranking without cloud dependencies, and containerized multi-step agent workflows.
+**Local-First AI Engineering Roadmap**
+* Executed a 6-month technical roadmap focused on building practical, private AI systems using local, open-source models.
+  * **Stack:** Chroma DB (Local RAG), LangGraph, Docker, vLLM.
 
 **EDUCATION**
+* **Imperial College London** **Aug. 2027** *MSc in Financial Technology* 
 
-**Imperial College London** **Aug. 2027** *MSc in Financial Technology* *London, UK*
+* **University of Wisconsin - Madison** **May 2023** *BSc in Industrial Engineering* 
 
-**University of Wisconsin - Madison** **May 2023** *BSc in Industrial Engineering* *Madison, WI*
-
-* **GPA: 3.78/4.0**; Dean's List 2021-2023.
+  * **GPA: 3.78/4.0**; Dean's List 2021-2023.
 
 **SKILLS, TOOLS & INTERESTS**
 * **Technical Skills:** Python (Pandas, NumPy, Scikit-learn, XGBoost, LightGBM, SQLAlchemy); SQL; PySpark; R.
 * **Data & AI Tools:** Databricks; Tableau; Power BI; Streamlit; LangChain; Llama 3/3.1; Ollama; FastAPI; Docker; Chroma (Vector DB).
-* **Languages:** English (Native); Spanish (Fluent); Cantonese (Fluent); Chinese (Conversational).
+* **Languages:** English (Native); Cantonese (Fluent); Spanish (Conversational); Chinese (Conversational).
 * **Interests:** Running; reading; chess.
